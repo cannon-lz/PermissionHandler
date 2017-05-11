@@ -45,7 +45,12 @@ public class PermissionFragment extends Fragment implements PermissionInterface 
         return permissionFragment;
     }
 
-    public PermissionFragment() {}
+    static PermissionFragment createPermissionFragment(PermissionChecker.CheckResult result, boolean isShowRationale, OnRequestPermissionListener listener) {
+        return createPermissionFragment(result, isShowRationale, listener, new RationaleDialog());
+    }
+
+    public PermissionFragment() {
+    }
 
     private PermissionFragment(OnRequestPermissionListener listener, RationaleDialogFactory factory) {
         mRequestListener = listener;
@@ -103,6 +108,11 @@ public class PermissionFragment extends Fragment implements PermissionInterface 
         return getContext();
     }
 
+    @Override
+    public void dismiss() {
+        finish();
+    }
+
     private void handleResult(String[] permissions, int[] grantResults) {
         if (permissions.length > 0) {
             int length = permissions.length;
@@ -156,6 +166,7 @@ public class PermissionFragment extends Fragment implements PermissionInterface 
                 @Override
                 public void onClick(DialogInterface dialog, int which) {
                     dialog.dismiss();
+                    permission.dismiss();
                 }
             });
             return builder.create();

@@ -58,8 +58,11 @@ public class PermissionRequester implements IPermission {
             callListener(listener);
             return;
         }
+
         PermissionFragment permissionFragment =
-                PermissionFragment.createPermissionFragment(result, mIsShowRationale, listener, mFactory);
+                mFactory == null
+                        ? PermissionFragment.createPermissionFragment(result, mIsShowRationale, listener) :
+                        PermissionFragment.createPermissionFragment(result, mIsShowRationale, listener, mFactory);
         ((FragmentActivity) context)
                 .getSupportFragmentManager()
                 .beginTransaction()

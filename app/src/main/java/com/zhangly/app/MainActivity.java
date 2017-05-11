@@ -4,6 +4,7 @@ import android.Manifest;
 import android.content.Context;
 import android.os.Bundle;
 import android.support.v7.app.AppCompatActivity;
+import android.util.Log;
 import android.view.View;
 import android.widget.TextView;
 import android.widget.Toast;
@@ -27,13 +28,13 @@ public class MainActivity extends AppCompatActivity {
         mTvTest.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                openCamera(MainActivity.this);
+                openCamera("", v);
             }
         });
     }
 
-    @Permissions({Manifest.permission.CAMERA, Manifest.permission.CALL_PHONE})
-    public void openCamera(Context context) {
+    @Permissions(value = {Manifest.permission.CAMERA, Manifest.permission.CALL_PHONE}, isShowRationale = true)
+    public void openCamera(String arg1, View view) {
         Toast.makeText(MainActivity.this, "open camera", Toast.LENGTH_SHORT).show();
     }
 
@@ -46,4 +47,5 @@ public class MainActivity extends AppCompatActivity {
     public void onComplete() {
         Toast.makeText(this, "open camera complete", Toast.LENGTH_SHORT).show();
     }
+
 }

@@ -13,4 +13,6 @@ public interface PermissionInterface {
     String[] getPermissions();
 
     Context context();
+
+    void dismiss();
 }

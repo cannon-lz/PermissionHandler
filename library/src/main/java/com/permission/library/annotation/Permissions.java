@@ -13,4 +13,7 @@ import java.lang.annotation.Target;
 public @interface Permissions {
 
     String[] value();
+
+    boolean isShowRationale() default false;
+
 }

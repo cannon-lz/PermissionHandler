@@ -1,7 +1,7 @@
 package com.permission.library.aspect;
 
-import android.content.Context;
 import android.support.v4.app.FragmentActivity;
+import android.util.Log;
 
 import com.permission.library.PermissionRequester;
 import com.permission.library.annotation.Permissions;
@@ -23,20 +23,34 @@ public class PermissionAspect {
 
     @Around("method(ann)")
     public Object requestPermissionAndExecute(final ProceedingJoinPoint joinPoint, Permissions ann) throws Throwable {
-        String[] permission = ann.value();
         final Object[] args = joinPoint.getArgs();
-        Context context = null;
-        final Object firstArg = args[0];
-        if (firstArg instanceof FragmentActivity) {
-            context = (FragmentActivity) firstArg;
+        Object target = joinPoint.getTarget();
+        Log.i("PermissionAspectj", String.format("target %s", target.getClass().getName()));
+        FragmentActivity context = null;
+        if (target instanceof FragmentActivity) {
+            context = (FragmentActivity) target;
         }
-
         if (context == null) {
-            context = (FragmentActivity) args[1];
+            context = findContextByArgs(args);
         }
-
-        PermissionRequester.getDefault().targetPermissions(permission).callback(new PermissionCallback(args, firstArg, joinPoint)).apply(context);
+        if (context == null) {
+            throw new IllegalArgumentException(String.format("The '%s' method needs to provide a parameter of type FragmentActivity", joinPoint.getSignature().getName()));
+        }
+        String[] permission = ann.value();
+        boolean showRationale = ann.isShowRationale();
+        PermissionRequester.getDefault()
+                .targetPermissions(permission)
+                .showRationale(showRationale)
+                .callback(new PermissionCallback(args, target, joinPoint)).apply(context);
         return null;
     }
 
+    private FragmentActivity findContextByArgs(Object[] args) {
+        for (Object arg : args) {
+            if (arg instanceof FragmentActivity) {
+                return (FragmentActivity) arg;
+            }
+        }
+        return null;
+    }
 }
